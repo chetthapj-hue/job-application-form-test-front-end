@@ -107,26 +107,40 @@ const InfoItem = ({ label, value }) => (
   </div>
 );
 
-const FileCard = ({ label, path }) => (
-  <div className={`flex items-center justify-between p-4 border-2 rounded-2xl transition-all ${path ? 'border-gray-100 bg-gray-50 hover:border-indigo-200' : 'border-dashed border-gray-200 opacity-50'}`}>
-    <div className="flex items-center space-x-3">
-      <div className={`p-2 rounded-lg ${path ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}>
-        <FileText className="h-6 w-6" />
+const FileCard = ({ label, path }) => {
+  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  
+  // Clean the BASE_URL by removing /api if present at the end
+  const serverUrl = BASE_URL.replace(/\/api$/, '');
+  
+  // Logic to determine the final URL:
+  // 1. If path is already a full URL (starts with http), use it.
+  // 2. If it's a relative path (filename only), prefix it with serverUrl/uploads/
+  const finalUrl = path?.startsWith('http') 
+    ? path 
+    : `${serverUrl}/uploads/${path}`;
+
+  return (
+    <div className={`flex items-center justify-between p-4 border-2 rounded-2xl transition-all ${path ? 'border-gray-100 bg-gray-50 hover:border-indigo-200' : 'border-dashed border-gray-200 opacity-50'}`}>
+      <div className="flex items-center space-x-3">
+        <div className={`p-2 rounded-lg ${path ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}>
+          <FileText className="h-6 w-6" />
+        </div>
+        <span className="font-bold text-gray-800">{label}</span>
       </div>
-      <span className="font-bold text-gray-800">{label}</span>
+      {path && (
+        <a
+          href={finalUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="text-indigo-600 hover:text-indigo-800"
+        >
+          <Download className="h-5 w-5" />
+        </a>
+      )}
     </div>
-    {path && (
-      <a
-        href={`http://localhost:5000/${path}`}
-        target="_blank"
-        rel="noreferrer"
-        className="text-indigo-600 hover:text-indigo-800"
-      >
-        <Download className="h-5 w-5" />
-      </a>
-    )}
-  </div>
-);
+  );
+};
 
 const getStatusStyle = (status) => {
   switch (status) {
