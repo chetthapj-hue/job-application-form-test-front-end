@@ -21,8 +21,10 @@ const Apply = () => {
 
   useEffect(() => {
     const loadDepts = async () => {
+      console.log('Fetching departments from:', import.meta.env.VITE_API_URL || 'http://localhost:5000/api');
       try {
         const { data } = await fetchDepartments();
+        console.log('Departments loaded:', data);
         setDepartments(data);
       } catch (error) {
         console.error('Error fetching departments:', error);
